@@ -8,14 +8,13 @@ app = Flask(__name__)
 
 def fetch_stocks(query_params: dict = {}) -> dict:
     services = {
-        "stocks1": "http://stocks1-aleph:8000/stocks",
-        "stocks2": "http://stocks2:8000/stocks"
+        "stocks1": "http://stocks1:8000/stocks"
     }
 
     stocks = {}
 
     portfolios = query_params.get("portfolio")
-    portfolios = [portfolios] if portfolios else ["stocks1", "stocks2"]
+    portfolios = [portfolios] if portfolios else ["stocks1"]
 
     for portfolio in portfolios:
         try:

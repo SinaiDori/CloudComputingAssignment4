@@ -10,7 +10,7 @@ import MongoDBService.MongoDBService as mongo_service
 app = Flask(__name__)
 
 # Collection name from the environment variable
-COLLECTION_NAME = os.getenv("COLLECTION_NAME", "stocks1")
+COLLECTION_NAME = "stocks1"
 
 
 @app.route('/stocks', methods=['POST', 'GET'])
@@ -30,7 +30,7 @@ def manage_stocks():
                 COLLECTION_NAME, prepared_stock_data)
 
             return jsonify({"id": inserted_id}), 201
-        
+
         except MalformedDataError as e:
             abort(400)
         except AlreadyExistsError as e:
@@ -45,7 +45,7 @@ def manage_stocks():
     elif request.method == 'GET':
         query_params = request.args.to_dict() if request.args else None
         try:
-            if query_params: # "fix" query parameters if they are present
+            if query_params:  # "fix" query parameters if they are present
                 if "purchase price" in query_params:
                     query_params["purchase price"] = round(
                         float(query_params["purchase price"]), 2)
