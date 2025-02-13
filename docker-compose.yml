@@ -1,0 +1,82 @@
+x-mongo-uri: &mongo-uri
+  MONGO_URI: "mongodb://mongodb:27017"
+
+services:
+  stocks1-aleph:
+    build:
+      context: .
+      dockerfile: ./StocksService/Dockerfile
+    environment:
+      <<: *mongo-uri
+      COLLECTION_NAME: "stocks1"
+    ports:
+      - "5001:8000"
+    expose:
+      - "8000"
+    depends_on:
+      - mongodb
+    restart: always
+
+  stocks1-bet:
+    build:
+      context: .
+      dockerfile: ./StocksService/Dockerfile
+    environment:
+      <<: *mongo-uri
+      COLLECTION_NAME: "stocks1"
+    ports:
+      - "5004:8000"
+    expose:
+      - "8000"
+    depends_on:
+      - mongodb
+    restart: always
+
+  stocks2:
+    build:
+      context: .
+      dockerfile: ./StocksService/Dockerfile
+    environment:
+      <<: *mongo-uri
+      COLLECTION_NAME: "stocks2"
+    ports:
+      - "5002:8000"
+    expose:
+      - "8000"
+    depends_on:
+      - mongodb
+    restart: always
+
+  capital-gains:
+    build:
+      context: .
+      dockerfile: ./CapitalGainsService/Dockerfile
+    ports:
+      - "5003:8080"
+    depends_on:
+      - stocks1-aleph
+      - stocks2
+    restart: always
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+  nginx:
+    build: ./NGINX
+    depends_on:
+      - stocks1-aleph
+      - stocks1-bet
+      - stocks2
+    ports:
+      - "80:80"
+    restart: always
+
+volumes:
+  mongo-data:
