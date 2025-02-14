@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Start Time
-        run: echo "$(date -Iminutes)" > log.txt
+        run: "echo $(date -Iminutes) > log.txt"
 
       - name: Add Submitter Name to Log
         run: echo "Submitter: Omer bengal, Sinay Dori, Yair Ben Zur" >> log.txt
