@@ -58,13 +58,22 @@ jobs:
       - name: Wait for Services to Start
         run: sleep 10
 
-      - name: See all running containers!?!?!?
+      - name: See all containers!?!?!?
         run: docker ps
+      
+      - name: See all running containers!?!?!?
+        run: docker ps --filter "status=running"
+      
+      - name: See all running containers with no headers!?!?!?
+        run: docker ps --filter "status=running" -q
+      
+      - name: Count all running containers with no headers!?!?!?
+        run: docker ps --filter "status=running" -q | wc -l
 
       - name: Check Container Status
         run: |
-          COUNT=$(docker ps | wc -l)
-          if [ "$COUNT" -eq 3 ]; then
+          RUNNING_COUNT=$(docker ps --filter "status=running" -q | wc -l)
+          if [ "$RUNNING_COUNT" -eq 3 ]; then
               echo "Container up and running" >> log.txt
           else
               echo "Container failed to run" >> log.txt
