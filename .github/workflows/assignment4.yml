@@ -27,10 +27,10 @@ jobs:
       - name: Check Build Success
         run: echo "image successfully built" >> log.txt || echo "image not able to be built" >> log.txt
 
-      - name: Upload Log File
+      - name: Upload Build Log File
         uses: actions/upload-artifact@v4
         with:
-          name: log
+          name: build_log
           path: log.txt
 
   test:
@@ -40,6 +40,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Download Build Log File
+        uses: actions/download-artifact@v4
+        with:
+          name: build_log
+          path: .
 
       - name: Start Application with Docker Compose
         run: docker compose up -d
@@ -70,10 +76,10 @@ jobs:
           name: test_results
           path: assn4_test_results.txt
 
-      - name: Upload Log File
+      - name: Upload Test Results Log File
         uses: actions/upload-artifact@v4
         with:
-          name: log
+          name: test_log
           path: log.txt
 
   query:
