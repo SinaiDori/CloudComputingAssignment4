@@ -71,7 +71,7 @@ jobs:
         run: pip install pytest
 
       - name: Run Pytest
-        run: pytest -v tests/assn4_tests.py > assn4_test_results.txt; exit 0
+        run: pytest -v tests/assn4_tests.py > assn4_test_results.txt || true
 
       - name: Check Test Results
         if: always()
