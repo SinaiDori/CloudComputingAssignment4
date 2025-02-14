@@ -16,7 +16,7 @@ jobs:
         run: echo "$(date -Iminutes)" > log.txt
 
       - name: Add Submitter Name to Log
-        run: echo "Submitter: Your Name Here" >> log.txt  # Replace with your name
+        run: echo "Submitter: Omer bengal, Sinay Dori, Yair Ben Zur" >> log.txt
 
       - name: Build Stocks Service Image
         run: docker build -t stocks-service ./StocksService
@@ -45,7 +45,7 @@ jobs:
         run: docker compose up -d
 
       - name: Wait for Services to Start
-        run: sleep 10  # Ensure services are running before testing
+        run: sleep 10
 
       - name: Run Pytest
         run: pytest -v tests/assn4_tests.py > assn4_test_results.txt
