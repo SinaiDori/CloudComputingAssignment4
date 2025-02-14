@@ -1,0 +1,2 @@
+stocks:shares=7
+stocks:symbol=AAPL
