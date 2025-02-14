@@ -125,7 +125,8 @@ jobs:
           while IFS= read -r line; do
             SERVICE=$(echo "$line" | cut -d':' -f1)
             QUERY=$(echo "$line" | cut -d':' -f2-)
-            echo "query: $line" >> response.txt
+            echo "query: ${SERVICE}:${QUERY}" >> response.txt
+            echo "response:" >> response.txt
             if [[ "$SERVICE" == "stocks" ]]; then
               curl -s "http://localhost:5001/stocks?$QUERY" >> response.txt
             elif [[ "$SERVICE" == "capital-gains" ]]; then
