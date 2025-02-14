@@ -58,7 +58,6 @@ def test_data():
 def test_post_stocks(test_data):
     # POST stock1
     response = requests.post(f"{STOCKS_BASE_URL}/stocks", json=stock1)
-    # assert response.status_code == 201, "POST stock1 did not return status 201"
     assert response.status_code == 201, "POST stock1 did not return status 201"
     stock1_id = response.json().get("id")
     test_data['stock1_id'] = stock1_id
@@ -75,6 +74,7 @@ def test_post_stocks(test_data):
     stock3_id = response.json().get("id")
     test_data['stock3_id'] = stock3_id
 
+    assert stock1_id != stock2_id != stock3_id, "Stock IDs are not unique"
 
 def test_get_stock1(test_data):
     stock1_id = test_data.get('stock1_id')
