@@ -12,10 +12,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Start Time
-        run: echo "$(date -Iminutes)" > log.txt
+      - name: Create log.txt File
+        run: touch log.txt
 
-      - name: Add Submitter Name to Log
+      - name: Set Start Time
+        run: echo "$(date -Iminutes)" >> log.txt
+
+      - name: Add Submitters Names to Log
         run: "echo 'Omer Bengal,Sinay Dori,Yair Ben Zur' >> log.txt"
 
       - name: Build Docker Images and Check Build Success
@@ -33,10 +36,33 @@ jobs:
           set -e
 
       - name: Upload Build Log File
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: temp_logfile
           path: log.txt
+
+      - name: Create pytest_test_results.txt File if job fails
+        if: failure()
+        run: touch assn4_test_results.txt
+
+      - name: Upload Pytest Test Results if job fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest_test_results
+          path: assn4_test_results.txt
+
+      - name: Create response.txt File if job fails
+        if: failure()
+        run: touch response.txt
+
+      - name: Upload response File if job fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: query_responses
+          path: response.txt
 
   test:
     name: Run Pytest Tests
@@ -46,7 +72,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Create assn4_test_results.txt File
+        run: touch assn4_test_results.txt
+
       - name: Download Build Log File
+        uses: actions/download-artifact@v4
+        with:
+          name: temp_logfile
+          path: .
+
+      - name: If the Build Log file download Fails, try to download it again
+        if: failure()
         uses: actions/download-artifact@v4
         with:
           name: temp_logfile
@@ -71,7 +107,7 @@ jobs:
         run: pip install pytest
 
       - name: Run Pytest
-        run: pytest -v tests/assn4_tests.py > assn4_test_results.txt || true
+        run: pytest -v tests/assn4_tests.py >> assn4_test_results.txt || true
 
       - name: Check Test Results
         if: always()
@@ -96,6 +132,17 @@ jobs:
           name: logfile
           path: log.txt
 
+      - name: Create response.txt File if job fails
+        if: failure()
+        run: touch response.txt
+  
+      - name: Upload response File if job fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: query_responses
+          path: response.txt
+
   query:
     name: Run Query Tests
     runs-on: ubuntu-latest
@@ -103,6 +150,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Create response.txt File
+        run: touch response.txt
 
       - name: Start Application with Docker Compose
         run: docker compose up -d
@@ -118,12 +168,6 @@ jobs:
           curl -X POST http://localhost:5001/stocks -H "Content-Type: application/json" -d '{"name": "Tesla, Inc.", "symbol": "TSLA", "purchase price": 194.58, "purchase date": "28-11-2022", "shares": 32}'
           curl -X POST http://localhost:5001/stocks -H "Content-Type: application/json" -d '{"name": "Microsoft Corporation", "symbol": "MSFT", "purchase price": 420.55, "purchase date": "09-02-2024", "shares": 35}'
           curl -X POST http://localhost:5001/stocks -H "Content-Type: application/json" -d '{"name": "Intel Corporation", "symbol": "INTC", "purchase price": 19.15, "purchase date": "13-01-2025", "shares": 10}'
-
-      - name: checkSomething
-        run: curl -s "http://localhost:5001/stocks?shares=7"
-
-      - name: checkSomething
-        run: curl -s "http://localhost:5001/stocks?shares=7" | wc -l
       
       - name: Execute Queries from query.txt
         run: |
@@ -138,10 +182,10 @@ jobs:
             elif [[ "$SERVICE" == "capital-gains" ]]; then
               curl -s "http://localhost:5003/capital-gains?$QUERY" >> response.txt
             fi
-            echo "" >> response.txt
           done < query.txt
 
       - name: Upload Query Responses
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: query_responses
