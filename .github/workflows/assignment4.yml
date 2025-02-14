@@ -58,8 +58,8 @@ jobs:
       - name: Wait for Services to Start
         run: sleep 10
 
-      - name: Count all running containers!?!?!?
-        run: docker ps | wc -l
+      - name: See all running containers!?!?!?
+        run: docker ps
 
       - name: Check Container Status
         run: |
