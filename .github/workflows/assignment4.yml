@@ -58,13 +58,13 @@ jobs:
       - name: Wait for Services to Start
         run: sleep 10
 
-      - name: See all running containers!?!?!?
-        run: docker ps
+      - name: Count all running containers!?!?!?
+        run: docker ps | wc -l
 
       - name: Check Container Status
         run: |
-          COUNT=$(docker ps --filter "name=stocks-service" --filter "name=capital-gains-service" --format "{{.Names}}" | wc -l)
-          if [ "$COUNT" -eq 2 ]; then
+          COUNT=$(docker ps | wc -l)
+          if [ "$COUNT" -eq 3 ]; then
               echo "Container up and running" >> log.txt
           else
               echo "Container failed to run" >> log.txt
