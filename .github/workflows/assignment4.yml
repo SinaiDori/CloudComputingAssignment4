@@ -30,7 +30,7 @@ jobs:
       - name: Upload Log File
         uses: actions/upload-artifact@v4
         with:
-          name: build_log
+          name: log
           path: log.txt
 
   test:
@@ -40,15 +40,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Download Build Log
-        uses: actions/download-artifact@v4
-        with:
-          name: build_log
-          path: .
-
-      - name: Rename Build Log
-        run: mv build_log log.txt
 
       - name: Start Application with Docker Compose
         run: docker compose up -d
@@ -82,7 +73,7 @@ jobs:
       - name: Upload Log File
         uses: actions/upload-artifact@v4
         with:
-          name: test_log
+          name: log
           path: log.txt
 
   query:
