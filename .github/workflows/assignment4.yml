@@ -16,16 +16,21 @@ jobs:
         run: echo "$(date -Iminutes)" > log.txt
 
       - name: Add Submitter Name to Log
-        run: "echo 'Submitters: Omer Bengal, Sinay Dori, Yair Ben Zur' >> log.txt"
+        run: "echo 'Omer Bengal,Sinay Dori,Yair Ben Zur' >> log.txt"
 
-      - name: Build Stocks Service Image
-        run: docker build -t stocks-service -f ./StocksService/Dockerfile .
-
-      - name: Build Capital Gains Service Image
-        run: docker build -t capital-gains-service -f ./CapitalGainsService/Dockerfile .
-
-      - name: Check Build Success
-        run: echo "image successfully built" >> log.txt || echo "image not able to be built" >> log.txt
+      - name: Build Docker Images and Check Build Success
+        run: |
+          set +e
+          docker build -t stocks-service -f ./StocksService/Dockerfile .
+          EXIT1=$?
+          docker build -t capital-gains-service -f ./CapitalGainsService/Dockerfile .
+          EXIT2=$?
+          if [ $EXIT1 -eq 0 ] && [ $EXIT2 -eq 0 ]; then
+              echo "image successfully built" >> log.txt
+          else
+              echo "image not able to be built" >> log.txt
+          fi
+          set -e
 
       - name: Upload Build Log File
         uses: actions/upload-artifact@v4
@@ -53,14 +58,20 @@ jobs:
       - name: Wait for Services to Start
         run: sleep 10
 
+      - name: Check Container Status
+        run: |
+          COUNT=$(docker ps --filter "name=stocks-service" --filter "name=capital-gains-service" --format "{{.Names}}" | wc -l)
+          if [ "$COUNT" -eq 2 ]; then
+              echo "Container up and running" >> log.txt
+          else
+              echo "Container failed to run" >> log.txt
+          fi
+
       - name: Install Pytest
         run: pip install pytest
 
       - name: Run Pytest
         run: pytest -v tests/assn4_tests.py > assn4_test_results.txt
-
-      - name: Check Container Status
-        run: echo "Container up and running" >> log.txt || echo "Container failed to run" >> log.txt
 
       - name: Check Test Results
         run: |

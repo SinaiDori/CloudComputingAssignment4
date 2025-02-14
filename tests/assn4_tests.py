@@ -151,9 +151,3 @@ def test_post_stock8_invalid(test_data):
     # POST stock8 (incorrect date format)
     response = requests.post(f"{STOCKS_BASE_URL}/stocks", json=stock8)
     assert response.status_code == 400, "POST stock8 did not return status 400 as expected"
-
-# Note:
-# To record the output of these tests in a file named assn4_test_results.txt,
-# configure your CI/CD pipeline (e.g., in your GitHub Actions workflow) to run:
-#    pytest -v tests/assn4_tests.py > assn4_test_results.txt
-# Then use the actions/upload-artifact@v4 action to upload the file.
