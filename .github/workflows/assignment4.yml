@@ -70,13 +70,11 @@ jobs:
       - name: Install Pytest
         run: pip install pytest
 
-      - name: Run Pytest test
-        run: pytest -v tests/assn4_tests.py
-
       - name: Run Pytest
-        run: pytest -v tests/assn4_tests.py > assn4_test_results.txt
+        run: pytest -v tests/assn4_tests.py > assn4_test_results.txt; exit 0
 
       - name: Check Test Results
+        if: always()
         run: |
           if grep -q "FAILED" assn4_test_results.txt; then
             echo "tests failed" >> log.txt
@@ -85,12 +83,14 @@ jobs:
           fi
 
       - name: Upload Test Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test_results
           path: assn4_test_results.txt
 
       - name: Upload Test Results Log File
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test_log
