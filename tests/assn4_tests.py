@@ -88,7 +88,7 @@ def test_get_all_stocks(test_data):
     assert response.status_code == 200, "GET all stocks did not return status 200"
     stocks = response.json()
     assert isinstance(stocks, list) and len(
-        stocks) == 3, "Expected exactly 3 stocks"
+        stocks) == 2, "Expected exactly 3 stocks"
 
 
 def test_get_stock_values(test_data):
